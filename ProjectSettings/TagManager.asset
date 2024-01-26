@@ -11,8 +11,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Ground
+  - Climbing
   - 
   - 
   - 
@@ -41,23 +41,11 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: BG1
-    uniqueID: 2267422865
-    locked: 0
-  - name: BG2
-    uniqueID: 2970713049
-    locked: 0
-  - name: BG3
-    uniqueID: 920794777
-    locked: 0
-  - name: BG4
-    uniqueID: 3927712613
-    locked: 0
-  - name: BG5
-    uniqueID: 963935345
-    locked: 0
   - name: Platformer
     uniqueID: 3082656599
+    locked: 0
+  - name: Climbing
+    uniqueID: 1077723577
     locked: 0
   - name: Player
     uniqueID: 579543941
