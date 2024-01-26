@@ -10,12 +10,14 @@ public class PlayerMovementScript : MonoBehaviour
     [SerializeField] float runSpeed = 10f;
     [SerializeField] float jumpSpeed = 25f;
     [SerializeField] float climbSpeed = 5f;
-
+    [SerializeField] Vector2 deadkick = new Vector2(20f,20f);
     Vector2 moveInput;
     Rigidbody2D rb2d;
     Animator animator;    
     CapsuleCollider2D capsuleCollider2D;    
     float gravityScaleAtStart;
+    bool isAlive = true;
+    
 
     void Start()
     {
@@ -28,9 +30,22 @@ public class PlayerMovementScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!isAlive)
+            return;
         Run();
         FlipSprite();
         ClimbLadder();
+        Die();
+    }
+
+    void Die()
+    {
+        if (capsuleCollider2D.IsTouchingLayers(LayerMask.GetMask("Enemies")))
+        {
+            isAlive = false;
+            animator.SetTrigger("Dying");
+            rb2d.velocity = deadkick;
+        }
     }
 
     void ClimbLadder()
@@ -65,12 +80,16 @@ public class PlayerMovementScript : MonoBehaviour
     }
 
     void OnMove(InputValue value)
-    {        
+    {
+        if (!isAlive)
+            return;
         moveInput = value.Get<Vector2>();
     }
     
     void OnJump(InputValue value)
     {
+        if (!isAlive)
+            return;
         if (!capsuleCollider2D.IsTouchingLayers(LayerMask.GetMask("Ground")))
             return;
         if (value.isPressed)
