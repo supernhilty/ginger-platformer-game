@@ -8,18 +8,21 @@ using UnityEngine.InputSystem;
 public class PlayerMovementScript : MonoBehaviour
 {
     [SerializeField] float runSpeed = 10f;
+    [SerializeField] float jumpSpeed = 25f;
+    [SerializeField] float climbSpeed = 5f;
+
     Vector2 moveInput;
     Rigidbody2D rb2d;
-    Animator animator;
-    [SerializeField] float jumpSpeed = 25f;
-    CapsuleCollider2D capsuleCollider2D;
-    [SerializeField] float climbSpeed = 5f;
+    Animator animator;    
+    CapsuleCollider2D capsuleCollider2D;    
+    float gravityScaleAtStart;
 
     void Start()
     {
         animator = GetComponent<Animator>();
         rb2d = GetComponent<Rigidbody2D>();
         capsuleCollider2D = GetComponent<CapsuleCollider2D>();
+        gravityScaleAtStart = rb2d.gravityScale;
     }
 
     // Update is called once per frame
@@ -33,8 +36,15 @@ public class PlayerMovementScript : MonoBehaviour
     void ClimbLadder()
     {
         if (!capsuleCollider2D.IsTouchingLayers(LayerMask.GetMask("Climbing")))
+        {
+            rb2d.gravityScale = gravityScaleAtStart;
+            animator.SetBool("isClimbing", false);
             return;
-        Vector2 climbVectocity = new Vector2(rb2d.velocity.y, moveInput.x * climbSpeed);
+        }
+        bool playerHasVerticalSpeed = Mathf.Abs(rb2d.velocity.y) > Mathf.Epsilon;
+        animator.SetBool("isClimbing", playerHasVerticalSpeed);
+        rb2d.gravityScale = 0f;
+        Vector2 climbVectocity = new Vector2(rb2d.velocity.x, moveInput.y * climbSpeed);
         rb2d.velocity = climbVectocity;
     }
 
@@ -42,8 +52,7 @@ public class PlayerMovementScript : MonoBehaviour
     {
         bool playerHasHorizontalSpeed = Mathf.Abs(rb2d.velocity.x) > Mathf.Epsilon;
         if (playerHasHorizontalSpeed)       
-            transform.localScale = new Vector2(Mathf.Sign(rb2d.velocity.x), 1f);
-        
+            transform.localScale = new Vector2(Mathf.Sign(rb2d.velocity.x), 1f);        
     }
 
     void Run()
@@ -56,8 +65,7 @@ public class PlayerMovementScript : MonoBehaviour
     }
 
     void OnMove(InputValue value)
-    {
-        
+    {        
         moveInput = value.Get<Vector2>();
     }
     
