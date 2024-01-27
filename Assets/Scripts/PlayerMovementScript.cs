@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovementScript : MonoBehaviour
 {
@@ -34,18 +35,30 @@ public class PlayerMovementScript : MonoBehaviour
             return;
         Run();
         FlipSprite();
-        ClimbLadder();
+        ClimbLadder();      
         Die();
     }
 
-    void Die()
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Finish")
+        {            
+            Invoke("StartAgain", 0.5f);
+        }
+    }
+       void Die()
     {
         if (capsuleCollider2D.IsTouchingLayers(LayerMask.GetMask("Enemies")))
         {
             isAlive = false;
             animator.SetTrigger("Dying");
             rb2d.velocity = deadkick;
+            StartAgain();
         }
+    }
+    void StartAgain()
+    {
+        SceneManager.LoadScene(0);
     }
 
     void ClimbLadder()
